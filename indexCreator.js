@@ -3,7 +3,13 @@
 const list = document.getElementById("list");
 const datas = [];
 const item = document.getElementById("item");
+
+const suggest = document.getElementById("itemList");
+
+let indexKeyword = [];
+
 let indexArray = [];
+
 
 // DATA TEMP
 
@@ -16,6 +22,16 @@ loadIndex();
 // LOAD INDEXES DATA
 function loadIndex() {
     const loadedIndex = localStorage.getItem("SAVEINDEX");
+    let indexKeyword = localStorage.getItem("KEYWORD_INDEX");
+
+    if (indexKeyword !== null) {
+    indexKeyword = JSON.parse(indexKeyword);
+    indexKeyword.forEach(function(data){
+        const option = document.createElement("option");
+        option.value = data;
+        suggest.appendChild(option);
+    });}
+
     if (loadedIndex !== null) {
         const parsedIndex = JSON.parse(loadedIndex);
              // data exist
@@ -34,8 +50,27 @@ function loadIndex() {
 // GET DATA
 function getdata() {
     let data = document.getElementById("item").value;
-    put(data);
-                             
+    indexKeyword.push(data);
+
+    if (data.includes(',')) {
+        data = data.split(',');
+        data.forEach(function(data){
+            if (data.includes(' ')) {
+                data = data.substring(1,data.length);
+                indexKeyword.push(data);
+                put(data);
+            } else {
+                indexKeyword.push(data)
+                put(data);
+            }
+        })
+        
+    } else {
+        put(data);
+        indexKeyword.push(data);
+    }
+    console.log(indexKeyword);
+    localStorage.setItem("KEYWORD_INDEX", JSON.stringify(indexKeyword));
 }
 
 // PUT and DRAW
@@ -84,3 +119,4 @@ function deleteIN(event){
 }
 
 
+// auto complete index

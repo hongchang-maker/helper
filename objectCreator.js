@@ -12,7 +12,14 @@ let selectedArray = [];
 
 let index4Pass = [];
 let object4Pass = [];
+let keyword = [];
 
+const loadedKeyword = localStorage.getItem("KEYWORD_OBJT");
+parsedkeyword = JSON.parse(loadedKeyword);
+
+if (parsedkeyword !== null){
+    keyword = parsedkeyword;
+}
 
 let objName = document.getElementById("objId");
 
@@ -23,6 +30,7 @@ loadIndex();
 
 function loadIndex() {
     const loadedIndex = localStorage.getItem("SAVEINDEX");
+    
     if (loadedIndex !== null) {
         const parsedIndex = JSON.parse(loadedIndex);
         indexArray = parsedIndex;
@@ -73,18 +81,64 @@ function objEditor(selectedArray){
     let data = selectedArray[0].data;
     let id = selectedArray[0].id;
     const btn = document.createElement("button");
+    const btn2 = document.createElement("button");
     const input = document.createElement("input");
+    const datalist = document.createElement("datalist");
+    datalist.setAttribute("id","itemList");
+    
+    
+    if (parsedkeyword !== null) {
+    parsedkeyword.forEach(function(data){
+        let option = document.createElement("option");
+        option.innerHTML = data;
+        datalist.appendChild(option);
+    })
+}
+    
     btn.addEventListener("click", putObj);
+    btn2.addEventListener("click", voice);
     btn.innerHTML = "(+)";
+    btn2.innerHTML = "Voice"
     input.setAttribute("type", "text");
     input.setAttribute("id", "objBlnk");
+    input.setAttribute("list", "itemList")
     input.placeholder = "put the name of object here";
     objInput.innerHTML = "";
     objInput.appendChild(input);
+    objInput.appendChild(datalist);
     objInput.appendChild(btn);
+    objInput.appendChild(btn2);
 }
 
+// voice object
 
+function voice(event) {
+
+    let blank = document.getElementById("objBlnk"); // blank.value
+    let voiceBtn = event.target
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.onstart = function () {
+        
+    };
+
+    recognition.onresult = function(event) {
+    const current = event.resultIndex;
+
+    const transcript = event.results[current][0].transcript;
+        console.log(blank.value);
+        if (blank.value !== "   ") {
+            blank.value = blank.value + "," + transcript;
+        } else { blacnk.value = transcript };
+    }
+
+
+    voiceBtn.addEventListener("click", () => {
+        recognition.start();
+    });
+}
 
 // objEditor - Event when u click (+) only
 
@@ -92,10 +146,56 @@ function putObj(event) {
     const obj = document.getElementById("objBlnk").value;
     if (obj !== "") {
     selectedArray[0].object = obj
+
+    let givenText = obj
+
+
+                                    if (givenText.includes(',')) {
+                                        givenText = givenText.split(',');
+                                        givenText.forEach(function(data){
+                                            if (data.includes(' ')) {
+                                                data = data.substring(1,data.length);
+                                                console.log("editted")
+                                                checkKey(data);
+                                                
+                                            } else {
+                                                console.log("no edit")  
+                                                checkKey(data);
+                                                   
+                                            }
+                                        })
+                                    } else {
+                                        console.log("original")
+                                        checkKey(givenText);
+                                        
+                                    }
+
     // localStorage.setItem("SAVEINDEX", JSON.stringify(indexArray));
+    console.log(keyword);
+    localStorage.setItem("KEYWORD_OBJT", JSON.stringify(keyword));
     drawObj(selectedArray);
     } else { alert("blank is not accepted !")}
 }
+
+function checkKey(data) {
+
+    if (keyword[0] !== undefined){
+        console.log("not null")
+        let num = keyword.indexOf(data)
+            if (num === -1) {
+                console.log("not null and new data")
+                keyword.push(data)
+                console.log(keyword);
+            } else {
+                console.log("already data")
+            }
+
+    } else if (keyword[0] === undefined) { 
+        console.log("null")
+        keyword.push(data)
+        console.log(keyword);
+}}
+
 
 
 // draw Obj (when the obj of array is exist, or 'null')

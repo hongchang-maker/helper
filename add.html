@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -18,10 +18,13 @@
             <h3 id=newInput></h3>
         </div>
         <div class="input">
-            <input type="text" id="soldText" placeholder="what was sold???">
-            <input type="button" id="soldBtn" value="add">
+            <input type="text" id="soldText" placeholder="what was sold???" list="itemList">
+            <datalist id="itemList">
+            </datalist>
+            <input type="button" id="soldBtn" value="add"><br><br>
+            <a href="controlmain.html">back</a>
         </div>
-        <a href="controlmain.html">back</a>
+        
     </div>
     <script src="add.js"></script>
 </body>
